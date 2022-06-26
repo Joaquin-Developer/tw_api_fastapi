@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 from pydantic import BaseModel
 from pydantic import EmailStr
@@ -15,7 +15,7 @@ class UserBase(BaseModel):
 
 
 class UserLogin(UserBase):
-    passw: str = Field(..., min_length=8)
+    passw: str = Field(..., min_length=8, max_length=64)
 
 
 class User(UserBase):
@@ -25,7 +25,11 @@ class User(UserBase):
 
 
 class Tw(BaseModel):
-    pass
+    tw_id: UUID = Field(...)
+    content: str = Field(..., min_length=1, max_length=256)
+    created_at: datetime = Field(default=datetime.now())
+    update_at: Optional[datetime] = Field(default=None)
+    by: User = Field(...)
 
 
 @app.get(path="/")
