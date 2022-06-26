@@ -1,10 +1,14 @@
+"""main.py tw_api_fastapi"""
+
 from typing import Optional, List
 from datetime import date, datetime
+import json
 from uuid import UUID
 from pydantic import BaseModel
 from pydantic import EmailStr
 from pydantic import Field
 from fastapi import FastAPI
+from fastapi import Body
 from fastapi import status
 
 app = FastAPI()
@@ -23,6 +27,10 @@ class User(UserBase):
     first_name: str = Field(..., min_length=1, max_length=50)
     last_name: str = Field(..., min_length=1, max_length=50)
     birth_date: Optional[date] = Field(default=None)
+
+
+class UserRegister(User):
+    passw: str = Field(..., min_length=8, max_length=64)
 
 
 class Tw(BaseModel):
@@ -47,8 +55,30 @@ def index():
 @app.post(
     path="/signup", response_model=User, status_code=status.HTTP_201_CREATED, summary="Register a User", tags=["Users"]
 )
-def signup():
-    pass
+def signup(user: UserRegister = Body):
+    """
+    register a user in the app
+
+    parameters:
+        - Request body parameter
+            - user: UserRegister
+
+    Returns a json with the basic user information.
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: date
+    """
+    with open("data/users.json", "r+", encoding="utf-8") as file:
+        results: List = json.loads(file.read())
+        user_dict = user.dict()
+        user_dict["user_id"] = str(user_dict["user_id"])
+        user_dict["birth_date"] = str(user_dict["birth_date"])
+        results.append(user_dict)
+        file.seek(0)
+        file.write(json.dumps(results))
+        return user
 
 
 @app.post(path="/login", response_model=User, status_code=status.HTTP_200_OK, summary="Login a User", tags=["Users"])
