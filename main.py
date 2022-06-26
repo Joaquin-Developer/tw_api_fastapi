@@ -93,3 +93,32 @@ def update_user():
 
 
 ## Tw:
+
+
+@app.get(path="/", response_model=List[Tw], status_code=status.HTTP_200_OK, summary="Get all tw", tags=["Tw"])
+def get_all_tw():
+    return {"TW api": "working"}
+
+
+@app.post(path="/post", response_model=Tw, status_code=status.HTTP_201_CREATED, summary="post a tw", tags=["Tw"])
+def post_tw():
+    pass
+
+
+@app.get(path="/tw/{tw_id}", response_model=Tw, status_code=status.HTTP_200_OK, summary="Get a tw", tags=["Tw"])
+def get_specific_tw():
+    pass
+
+
+@app.delete(
+    path="/tw/{tw_id}/delete", response_model=Tw, status_code=status.HTTP_200_OK, summary="Delete a tw", tags=["Tw"]
+)
+def delete_tw():
+    pass
+
+
+@app.put(
+    path="/tw/{tw_id}/update", response_model=Tw, status_code=status.HTTP_200_OK, summary="Update a tw", tags=["Tw"]
+)
+def update_tw():
+    pass
